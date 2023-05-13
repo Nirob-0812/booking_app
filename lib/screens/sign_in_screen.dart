@@ -3,6 +3,7 @@ import 'package:booking_app/screens/home_screen.dart';
 import 'package:booking_app/screens/sign_up_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({Key? key}) : super(key: key);
@@ -37,7 +38,11 @@ class _SignInScreenState extends State<SignInScreen> {
                   Navigator.push(context, MaterialPageRoute(builder:(context)=>HomeScreen()));
                 }).onError((error, stackTrace) {print("Error: ${error}");});
               }),
-              SignUpOption()
+              SignUpOption(),
+              SizedBox(height: 20,),
+              ElevatedButton(onPressed: (){
+                SignInWithGoogle();
+              }, child: Text("Sign in with google"))
             ],
           ),
         ),
@@ -45,6 +50,20 @@ class _SignInScreenState extends State<SignInScreen> {
     ),
     );
   }
+  SignInWithGoogle() async{
+    GoogleSignInAccount? googleUser=await GoogleSignIn().signIn();
+    GoogleSignInAuthentication? googleAuth=await googleUser?.authentication;
+     AuthCredential credential=GoogleAuthProvider.credential(
+       accessToken: googleAuth?.accessToken,
+       idToken:googleAuth?.idToken
+     );
+     UserCredential userCredential=await FirebaseAuth.instance.signInWithCredential(credential);
+    print(userCredential.user?.displayName);
+    if(userCredential.user!=null){
+      Navigator.of(context).push(MaterialPageRoute(builder: (context)=>HomeScreen()));
+    }
+  }
+
   Row SignUpOption(){
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,

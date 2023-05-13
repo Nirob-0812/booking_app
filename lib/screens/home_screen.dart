@@ -1,6 +1,7 @@
 import 'package:booking_app/screens/sign_in_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -17,7 +18,8 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: Colors.greenAccent,),
       body: Center(
         child: ElevatedButton(
-            onPressed: (){
+            onPressed: () async{
+              await GoogleSignIn().signOut();
               FirebaseAuth.instance.signOut().then((value){
                 Navigator.push(context, MaterialPageRoute(builder: (context){
                   return SignInScreen();
